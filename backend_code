@@ -1,0 +1,205 @@
+import docx
+import csv
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Load the Word document
+doc = docx.Document("/content/resume1.docx")
+
+# Initialize a list to store the extracted content
+csv_data = []
+
+# Iterate through paragraphs and extract text
+for paragraph in doc.paragraphs:
+    csv_data.append([paragraph.text])
+
+# Write the extracted content to a CSV file
+csv_file_path = "/content/output1.csv"
+with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+    csv_writer = csv.writer(csvfile)
+    csv_writer.writerows(csv_data)
+
+print("Conversion completed.")
+
+# Load the CSV file into a DataFrame
+df = pd.read_csv(r'/content/output1.csv', header=None)
+
+# Concatenate the content into a single column
+content = df[0].str.cat(sep='\n')
+
+# Find the indices of "Skills:" and "Experience:"
+skills_index = content.find("Skills:")
+experience_index = content.find("Experience:")
+
+# Extract the skills data
+skills_data = content[skills_index + len("Skills:"):experience_index].strip()
+
+# Split the skills data into individual skills
+skills_list = [skill.strip("- ").strip() for skill in skills_data.split('\n') if skill.strip()]
+
+resumes = skills_list
+
+# Print the extracted skills
+for skill in skills_list:
+    print(skill)
+
+job_descriptions = [
+    "We are looking for a software engineer to develop web applications.",
+    "Join our team as a software developer to create innovative software solutions."
+]
+
+# Combine job descriptions and resumes
+documents = job_descriptions + resumes
+
+# Create a CountVectorizer instance
+vectorizer = CountVectorizer().fit_transform(documents)
+
+# Calculate cosine similarity between job descriptions and resumes
+cosine_similarities = cosine_similarity(vectorizer[0:2], vectorizer[2:])
+
+
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+def suggest_skills(job_description, skills_set):
+    # Prepare job descriptions and skills set
+    documents = [job_description] + resumes
+    
+    # Create a CountVectorizer instance
+    vectorizer = CountVectorizer().fit_transform(documents)
+    
+    # Calculate cosine similarity between job description and skills
+    cosine_similarities = cosine_similarity(vectorizer[0:1], vectorizer[1:])
+    
+    # Find the most similar skill based on cosine similarity
+    most_similar_skill_idx = cosine_similarities.argmax()
+    
+    # Suggest skills from the skills set
+    suggested_skills = set(skills_set) - set(skills_set[most_similar_skill_idx])
+    
+    return suggested_skills
+
+# Example job description and skills set
+job_description = "We are looking for a software engineer to develop web applications."
+skills_set = [
+    "programming",
+    "web development",
+    "software engineering",
+    "problem solving",
+    "communication"
+]
+
+# Print suggested skills
+if suggested_skills:
+    print("Suggested skills for this job:")
+    for skill in suggested_skills:
+        print(skill)
+else:
+    print("No additional skills suggested.")
+    from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+def suggest_development_plan(resumes, job_description_skills):
+    # Find the skills gap
+    skills_gap = set(skills_set) - set(resumes)
+    
+    if not skills_gap:
+        return "You already possess all the necessary skills for this role."
+    
+    # Suggest a tailored development plan
+    suggested_plan = f"To excel in the new role, you should focus on developing the following skills:\n"
+    for skill in skills_gap:
+        suggested_plan += f"- {skill}\n"
+    
+    return suggested_plan
+
+
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+def rank_candidates(job_description, candidate_skills):
+    # Create a CountVectorizer instance
+    vectorizer = CountVectorizer().fit_transform([job_description] + candidate_skills)
+    
+    # Calculate cosine similarity between job description and candidate skills
+    cosine_similarities = cosine_similarity(vectorizer[0:1], vectorizer[1:])
+    
+    # Combine candidates with their cosine similarity scores
+    ranked_candidates = list(zip(candidate_skills, cosine_similarities[0]))
+    
+    # Sort candidates by similarity score in descending order
+    ranked_candidates.sort(key=lambda x: x[1], reverse=True)
+    
+    return ranked_candidates
+
+# Example job description and candidate skills
+job_description = "We are looking for a software engineer to develop web applications."
+candidates = [
+    "Experienced software engineer with expertise in web development and problem solving.",
+    "Junior developer with strong programming skills and a passion for web development.",
+    "Data analyst with skills in data processing and visualization."
+]
+
+# Rank the candidates based on similarity to the job description
+ranked_candidates = rank_candidates(job_description, candidates)
+
+# Print the ranked candidates
+print("Ranked candidates:")
+for candidate, similarity in ranked_candidates:
+    print(f"Candidate: {candidate}")
+    print(f"Similarity to job description: {similarity:.2f}")
+    print()
+    # Find the best matching job for each resume
+for i, resume_similarities in enumerate(cosine_similarities):
+    best_matching_job_idx = resume_similarities.argmax()
+
+    if resume_similarities[best_matching_job_idx] > 0:
+        best_matching_job = job_descriptions[best_matching_job_idx]
+        print(f"Best matching job for Resume {i+1}: {best_matching_job}")
+    else:
+        print(f"No suitable job found for Resume {i+1}")
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+def suggest_career_paths(individual_abilities, career_opportunities):
+    suggested_paths = []
+
+    for career, career_skills in career_opportunities.items():
+        # Create a CountVectorizer instance
+        vectorizer = CountVectorizer().fit_transform([', '.join(individual_abilities), ', '.join(career_skills)])
+        
+        # Calculate cosine similarity between individual abilities and career skills
+        cosine_similarity_score = cosine_similarity(vectorizer[0:1], vectorizer[1:])[0][0]
+        
+        if cosine_similarity_score > 0:
+            suggested_paths.append((career, cosine_similarity_score))
+    
+    # Sort suggested paths by similarity score in descending order
+    suggested_paths.sort(key=lambda x: x[1], reverse=True)
+    
+    return suggested_paths
+
+# Example individual abilities and career opportunities
+individual_abilities = ["programming", "problem solving", "communication"]
+career_opportunities = {
+    "Software Engineer": ["programming", "web development", "problem solving"],
+    "Data Analyst": ["data analysis", "statistics", "communication"],
+    "Marketing Specialist": ["marketing", "communication", "creativity"]
+}
+
+# Suggest career paths based on individual abilities
+suggested_career_paths = suggest_career_paths(individual_abilities, career_opportunities)
+
+# Print suggested career paths
+if suggested_career_paths:
+    print("Suggested career paths:")
+    for career, similarity in suggested_career_paths:
+        print(f"Career: {career}")
+        print(f"Similarity to individual abilities: {similarity:.2f}")
+        print()
+else:
+    print("No suitable career paths found.")
