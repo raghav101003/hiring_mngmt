@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Job.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif&family=Nunito&display=swap" rel="stylesheet">
+
+    <title>Job Portal Website</title>
+</head>
+<body>
+    <nav class="navbar">
+        <h2 class="navbar-logo"><a href="#">JOBACT</a></h2>
+        <div class="navbar-menu">
+            <a href="#jobs">Jobs</a>
+            <a href="#companies">Companies</a>
+            <a href="#testimoni">Testimonial</a>
+            <a href="#blog">Blogs</a>
+            <a href="#">Sign In</a>
+
+        </Div>
+        <div class="menu-toggle">
+            <span class="bar"></span> 
+            <span class="bar"></span> 
+            <span class="bar"></span> 
+        </div>
+    </nav>
+    <header>
+        <h1 class="header-title">
+             FIND YOUR <br> <span> PERFECT JOB</span> <br> EASILY
+        </h1>
+    </header>
+    <div class="Apply">
+        <a href="#applying">Apply for a job</a>
+    <section class="applying" id="applying">
+        <input type="file" id="file"/>
+        <label for="file">Upload File</label>
+
+    </section>
+    
+</body>
+</html>
